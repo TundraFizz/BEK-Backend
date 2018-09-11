@@ -1,0 +1,501 @@
+/* Load custom fonts */
+@font-face {
+  font-family: days-sans;
+  src: url(../fonts/days_sans.otf);
+}
+
+@font-face {
+  font-family: droid-sans;
+  src: url(../fonts/droid_sans.ttf);
+}
+
+/* Everything */
+body {
+  display: block;
+  font-family: droid-sans;
+  background-image: url(../img/noise.png);
+}
+
+/* I prefer collapsing the borders on all my tables */
+table {border-collapse: collapse;}
+
+.container {
+  margin: 10px 8px;
+}
+
+.container > * {
+  display: table;
+  margin: 0 auto;
+}
+
+.nav-menu {
+  display: inline-block;
+  text-align: center;
+  font-size: 0;
+}
+
+.page-button {
+  display: inline-block;
+  border: 1px solid black;
+  font-size: 16px;
+  padding: 2px;
+  margin: 2px;
+  background-color: #c5c5c5;
+  cursor: pointer;
+
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.page-button:hover {
+  background-color: #cccccc;
+}
+
+.page-button:active {
+  background-color: darkgray;
+}
+
+.page-button[current-page] {
+  background-color: #36c6dc;
+}
+
+.volume-history table {
+  display: block;
+  height: 207px;
+  overflow-y: auto;
+  border: 1px solid black;
+  text-align: center;
+
+  thead tr {
+    background-color: #ff9098;
+
+    th {
+      &:nth-child(1){width: 150px;}
+      &:nth-child(2){width:  40px;}
+      &:nth-child(3){width: 100px;}
+    }
+  }
+
+  tbody tr td {
+    width: auto;
+  }
+
+  tbody tr:nth-child(2n+1) {
+    background-color: #36c6dc;
+  }
+
+  tbody tr:nth-child(2n) {
+    background-color: #d3d3d3;
+  }
+}
+
+.next-eth-block {
+  .header {
+    .message {
+      padding: 0;
+    }
+
+    .footnote {
+      position: relative;
+      top: -5px;
+      left: 1px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+  }
+
+  .data {
+    .days, .hours, .minutes, .seconds {
+      padding: 0;
+
+      div {
+        border: 1px solid black;
+        border-radius: 4px;
+        margin: 0 auto;
+        padding: 4px;
+        width: 20px;
+        text-align: center;
+      }
+    }
+
+    .colon {
+      width: 10px;
+      padding: 0;
+      text-align: center;
+
+      div:after {
+        content: ":";
+      }
+    }
+  }
+
+  .labels {
+    font-size: 10px;
+    text-align: center;
+
+    td {
+      padding: 4px 0 0 0;
+    }
+
+    .days, .hours, .minutes, .seconds {
+      min-width: 44px;
+    }
+  }
+}
+
+.weekly-rewards table {
+  display: block;
+  height: 200px;
+  overflow-y: auto;
+  border: 1px solid black;
+  text-align: center;
+
+  thead {
+    tr {
+      background-color: #ff9098;
+
+      th {
+        &:nth-child(1){width: 100px;}
+        &:nth-child(2){width: 200px;}
+        &:nth-child(3){width: 100px;}
+        &:nth-child(4){width: 150px;}
+      }
+    }
+  }
+
+  tbody tr {
+    height: 24px;
+  }
+
+  tbody tr:nth-child(2n+1) {
+    background-color: #36c6dc;
+  }
+
+  tbody tr:nth-child(2n) {
+    background-color: #d3d3d3;
+  }
+
+  tbody tr a {
+    color: blue;
+    text-decoration: none;
+
+    .aaa {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      vertical-align: super;
+      background: url(../img/external-link.svg);
+    }
+  }
+
+  tbody tr a:hover {
+    text-decoration: underline;
+  }
+
+  tbody tr a:active {
+    color: #5252ff;
+  }
+}
+
+.show-math {
+  display: inline-block;
+  font-size: 0;
+  margin-left: 4px;
+
+  .button {
+    display: inline-block;
+    position: relative;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid black;
+    background-color: #36c6dc;
+    cursor: pointer;
+  }
+
+  .button:hover {
+    background-color: #42cce1;
+  }
+
+  .button:active {
+    background-color: #2dbdd3;
+  }
+
+  .button[on] {
+    &:after {
+      position: absolute;
+      top: -5px;
+      left: 1px;
+      font-size: 20px;
+      color: #148214;
+      content: "✔";
+    }
+  }
+
+  .text {
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 4px;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+.calc-page {
+  table {
+    margin-top: 10px;
+
+    tr {
+      height: 24px;
+    }
+
+    input {
+      border: 1px solid transparent;
+    }
+
+    &.outputs-fsa-amount {
+      min-width: 350px;
+      text-align: center;
+      border: 1px solid black;
+
+      tr:first-child {
+        border-bottom: 1px solid black;
+      }
+
+      td {
+        width: 33.33%;
+        border-right: 1px solid black;
+      }
+    }
+
+    &.outputs-coss-value {
+      min-width: 350px;
+      text-align: center;
+      border: 1px solid black;
+
+      td {
+        width: 50%;
+        border-right: 1px solid black;
+      }
+    }
+
+    &.outputs-estimated-price {
+      min-width: 350px;
+      text-align: center;
+      border: 1px solid black;
+    }
+  }
+
+  .submit {
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid black;
+    background-color: #c5c5c5;
+    cursor: pointer;
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .submit:hover {
+    background-color: #cccccc;
+  }
+
+  .submit:active {
+    background-color: darkgray;
+  }
+
+  .math {
+    display: none;
+
+    .totals, .explanations {
+      display: none;
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1px solid black;
+      padding: 4px;
+    }
+
+    .totals {
+      div {
+        cursor: pointer;
+      }
+    }
+
+    .explanations {
+      margin-top: 10px;
+
+      div {
+        display: none;
+      }
+    }
+  }
+}
+
+.fsa-stats table {
+  display: block;
+  height: 400px;
+  overflow-y: scroll;
+  border: 1px solid black;
+}
+
+.fsa-stats thead tr {
+  background-color: #ff9098;
+}
+
+.fsa-stats tbody tr:nth-child(2n+1) {
+  background-color: #36c6dc;
+}
+
+.fsa-stats tbody tr:nth-child(2n) {
+  background-color: #d3d3d3;
+}
+
+.fsa-stats thead th:nth-child(1) {width: 120px;}
+.fsa-stats thead th:nth-child(2) {width: 100px;}
+.fsa-stats thead th:nth-child(3) {width: 100px;}
+.fsa-stats thead th:nth-child(4) {width: 100px;}
+.fsa-stats thead th:nth-child(5) {width: 160px;}
+
+.fsa-stats tbody td                {padding: 1px 4px;}
+.fsa-stats tbody td:nth-child(1)   {width: 120px; height: 20px;}
+.fsa-stats tbody td:nth-child(2)   {width: 100px; height: 20px; text-align: center;}
+.fsa-stats tbody td:nth-child(3)   {width: 100px; height: 20px; text-align: center;}
+.fsa-stats tbody td:nth-child(4)   {width: 100px; height: 20px; text-align: center;}
+.fsa-stats tbody td:nth-child(n+5) {width: 160px; height: 20px; text-align: center;}
+
+.delete {
+  margin: 10px auto;
+  padding: 2px 4px;
+  border: 1px solid black;
+  border-radius: 6px;
+  background-color: #d3d3d3;
+  cursor: pointer;
+
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+
+  &:hover {
+    background-color: #36c6dc;
+  }
+
+  &:active {
+    background-color: #ff9098;
+  }
+}
+
+.dropzone {
+  border: 1.5px dashed black;
+  width: 300px;
+  height: 200px;
+
+  div {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
+.totals {
+  border: 1px solid black;
+}
+
+.val-total,
+.val-transferred {
+  display: none;
+}
+
+.faq {
+  max-width: 650px;
+
+  .q-and-a {
+    margin: 16px 0px;
+    text-align: center;
+
+    span {
+      font-weight: bold;
+    }
+
+    .q, .a {
+      margin-bottom: 4px;
+    }
+
+    &:first-child {
+      margin-top: 0;
+    };
+  }
+}
+
+.feedback {
+  text-align: center;
+
+  .header {
+    width: 580px;
+    margin-bottom: 10px;
+  }
+
+  .textarea {
+    margin-bottom: 10px;
+  }
+
+  .submit {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid black;
+    background-color: #c5c5c5;
+    cursor: pointer;
+
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .submit:hover {
+    background-color: #cccccc;
+  }
+
+  .submit:active {
+    background-color: darkgray;
+  }
+
+  div {
+    .response {
+      display: none;
+      opacity: 0;
+      border-radius: 4px;
+      border: 1px solid black;
+      padding: 2px;
+      cursor: pointer;
+
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+  }
+}
+
+.error-404 {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background-color: #ccc;
+}

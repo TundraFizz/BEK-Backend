@@ -6,25 +6,13 @@ var moment     = require("moment");
 var mysql      = require("mysql");
 var fs         = require("fs");
 
-function MySqlConnection(){
-  fs.readFile("config.json", "utf-8", (error, data) => {
-    if(error){
-      console.log(error);
-      return;
-    }
-
-    data = JSON.parse(data);
-
-    conn = mysql.createConnection({
-      host    : data["host"],
-      user    : data["user"],
-      password: data["password"],
-      database: data["database"]
-    });
-  });
-}
-
-MySqlConnection();
+// var db =
+var conn = mysql.createPool({
+  "host"    : app["data"]["mysql"]["host"],
+  "user"    : app["data"]["mysql"]["user"],
+  "password": app["data"]["mysql"]["password"],
+  "database": app["data"]["mysql"]["database"]
+});
 
 function FEK(){}
 

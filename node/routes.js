@@ -8,8 +8,6 @@ var fs  = require("fs");
 // Index //
 ///////////
 app.get("/", function(req, res){
-  console.log("Index");
-
   fs.readFile("static/navbar.html",        "utf-8", function(err, desktop){
   fs.readFile("static/navbar-mobile.html", "utf-8", function(err, mobile){
     res.render("index.ejs", {

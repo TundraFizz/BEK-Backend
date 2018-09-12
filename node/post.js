@@ -6,17 +6,16 @@ var moment     = require("moment");
 var mysql      = require("mysql");
 var fs         = require("fs");
 
-// var db =
-var conn = mysql.createPool({
+var db = mysql.createPool({
   "host"    : app["data"]["mysql"]["host"],
   "user"    : app["data"]["mysql"]["user"],
   "password": app["data"]["mysql"]["password"],
   "database": app["data"]["mysql"]["database"]
 });
 
-function FEK(){}
+function BEK(){}
 
-FEK.prototype.Initialize = function(req){return new Promise((resolve) => {
+BEK.prototype.Initialize = function(req){return new Promise((resolve) => {
   var self = this;
   self.response = {};
   self.response["records"]       = {};
@@ -43,7 +42,7 @@ FEK.prototype.Initialize = function(req){return new Promise((resolve) => {
       self.region = "EUW";
 
     // Data that will be used
-    // Remember to change myName to name and myRegion to region in FEK.user.js
+    // Remember to change myName to name and myRegion to region in BEK.user.js
     // this.name    = req.body.myName;
     // this.region  = req.body.myRegion;
     // this.users   = req.body.users;
@@ -53,7 +52,7 @@ FEK.prototype.Initialize = function(req){return new Promise((resolve) => {
   });
 })}
 
-FEK.prototype.GetBoardsInfo = function(){return new Promise((resolve) => {
+BEK.prototype.GetBoardsInfo = function(){return new Promise((resolve) => {
   var self = this;
 
   // Get JSON data from Riot's Boards API
@@ -76,37 +75,37 @@ FEK.prototype.GetBoardsInfo = function(){return new Promise((resolve) => {
   });
 })}
 
-FEK.prototype.CheckIfUserExists = function(){return new Promise((resolve) => {
+BEK.prototype.CheckIfUserExists = function(){return new Promise((resolve) => {
   // Check if the Boards ID exists in the database
   var self = this;
   var sql  = `SELECT * FROM users WHERE boards_id=?`;
   var args = [self.boardsId];
 
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     var lastLogin = new Date();
 
     if(rows.length == 0){
       var sql = `INSERT INTO users (boards_id, name, region, last_login) VALUES (?,?,?,?)`;
       var args = [self.boardsId, self.boardsName, self.boardsRegion, lastLogin];
 
-      conn.query(sql, args, function(err, rows){
+      db.query(sql, args, function(err, rows){
         resolve();
       });
     }else{
       var sql = `UPDATE users SET name=?, region=?, last_login=? WHERE boards_id=?`;
       var args = [self.boardsName, self.boardsRegion, lastLogin, self.boardsId];
-      conn.query(sql, args, function(err, rows){
+      db.query(sql, args, function(err, rows){
         resolve();
       });
     }
   });
 })}
 
-FEK.prototype.GetVersion = function(){return new Promise((resolve) => {
+BEK.prototype.GetVersion = function(){return new Promise((resolve) => {
   var self = this;
   var sql = `SELECT number, link FROM version`;
   var args = [];
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     // IMPORTANT!
     // Change this from records to something else later
     self.response["version"]["number"] = rows[0]["number"];
@@ -115,11 +114,11 @@ FEK.prototype.GetVersion = function(){return new Promise((resolve) => {
   });
 })}
 
-FEK.prototype.GetEvent = function(){return new Promise((resolve) => {
+BEK.prototype.GetEvent = function(){return new Promise((resolve) => {
   var self = this;
   var sql = `SELECT message, stream, thread, start, end FROM event`;
   var args = [];
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     self.response["event"]["message"] = rows[0]["message"];
     self.response["event"]["stream"]  = rows[0]["stream"];
     self.response["event"]["thread"]  = rows[0]["thread"];
@@ -129,11 +128,11 @@ FEK.prototype.GetEvent = function(){return new Promise((resolve) => {
   });
 })}
 
-FEK.prototype.GetTwitterInfo = function(){return new Promise((resolve) => {
+BEK.prototype.GetTwitterInfo = function(){return new Promise((resolve) => {
   var self = this;
   var sql = `SELECT * FROM tweets ORDER BY id DESC LIMIT 0, 2`;
   var args = [];
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     for(var i = 0; i < rows.length; i++){
       var data           = {};
       data["id"]         = rows[i]["id"];
@@ -150,7 +149,7 @@ FEK.prototype.GetTwitterInfo = function(){return new Promise((resolve) => {
   });
 })}
 
-FEK.prototype.GetAvatars = function(){return new Promise((resolve) => {
+BEK.prototype.GetAvatars = function(){return new Promise((resolve) => {
   if(!this.users){
     resolve();
     return;
@@ -177,7 +176,7 @@ FEK.prototype.GetAvatars = function(){return new Promise((resolve) => {
     }
   }
 
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     for(var i = 0; i < rows.length; i++){
       var row      = rows[i];
       var name     = row["name"];
@@ -203,9 +202,9 @@ FEK.prototype.GetAvatars = function(){return new Promise((resolve) => {
   });
 })}
 
-FEK.prototype.FindAvatar = function(boardsId){
-  var localPath = "static/fek-avatars/" + boardsId;
-  var publicPath = "https://tundrafizz.space/fek-avatars/" + boardsId;
+BEK.prototype.FindAvatar = function(boardsId){
+  var localPath = "static/bek-avatars/" + boardsId;
+  var publicPath = "https://tundrafizz.com/bek-avatars/" + boardsId;
   var extensions = [".jpg", ".jpeg", ".png", ".gif", ".webm", ".bmp"];
 
   for(var i = 0; i < extensions.length; i++){
@@ -218,24 +217,24 @@ FEK.prototype.FindAvatar = function(boardsId){
 }
 
 app.post("/database", function(req, res){
-  var fek = new FEK();
+  var bek = new BEK();
 
-  fek.Initialize(req)
+  bek.Initialize(req)
   .then(() => {
-    if(fek.name){
-      fek.GetBoardsInfo()
-      .then(() => fek.CheckIfUserExists())
-      .then(() => fek.GetVersion())
-      .then(() => fek.GetEvent())
-      .then(() => fek.GetTwitterInfo())
-      .then(() => fek.GetAvatars())
-      .then(() => res.json(fek.response));
+    if(bek.name){
+      bek.GetBoardsInfo()
+      .then(() => bek.CheckIfUserExists())
+      .then(() => bek.GetVersion())
+      .then(() => bek.GetEvent())
+      .then(() => bek.GetTwitterInfo())
+      .then(() => bek.GetAvatars())
+      .then(() => res.json(bek.response));
     }else{
-      fek.GetVersion()
-      .then(() => fek.GetEvent())
-      .then(() => fek.GetTwitterInfo())
-      .then(() => fek.GetAvatars())
-      .then(() => res.json(fek.response));
+      bek.GetVersion()
+      .then(() => bek.GetEvent())
+      .then(() => bek.GetTwitterInfo())
+      .then(() => bek.GetAvatars())
+      .then(() => res.json(bek.response));
     }
   })
 })
@@ -248,7 +247,7 @@ UploadAvatar.prototype.Initialize = function(req){return new Promise((resolve) =
 
   self.form           = new formidable.IncomingForm();
   self.form.multiples = true; // Form Option: Allow uploading multiple files at once
-  self.form.uploadDir = "./static/fek-avatars"; // Form Option: Set the upload directory
+  self.form.uploadDir = "./static/bek-avatars"; // Form Option: Set the upload directory
 
   self.form.parse(req, function(err, data, files){
     if(Object.keys(files).length){
@@ -285,19 +284,24 @@ UploadAvatar.prototype.GetIdFromRiotApi = function(){return new Promise((resolve
       self.id = data["id"];
       self.fullFilePath = `${self.form.uploadDir}/${self.id}.${self.fileExt}`;
 
-      fs.readdir(self.form.uploadDir, function(err, files){
-        self.files = files;
-        for(var i = 0; i < self.files.length; i++){
-          var dir = self.form.uploadDir;
-          var id  = self.files[i].split(".")[0];
-          var ext = self.files[i].split(".")[1];
-          var deleteThisFile = `${dir}/${id}.${ext}`;
+      // fs.readdir(self.form.uploadDir, function(err, files){
+      //   self.files = files;
+      //   for(var i = 0; i < self.files.length; i++){
+      //     var dir = self.form.uploadDir;
+      //     var id  = self.files[i].split(".")[0];
+      //     var ext = self.files[i].split(".")[1];
+      //     var deleteThisFile = `${dir}/${id}.${ext}`;
 
-          if(id == self.id)
-            fs.unlinkSync(deleteThisFile);
-        }
+      //     if(id == self.id)
+      //       fs.unlinkSync(deleteThisFile);
+      //   }
 
-        fs.rename(self.filePath, self.fullFilePath);
+      //   fs.rename(self.filePath, self.fullFilePath);
+      //   self.response = true;
+      //   resolve();
+      // });
+
+      fs.rename(self.filePath, self.fullFilePath, function(err){
         self.response = true;
         resolve();
       });
@@ -314,21 +318,21 @@ UploadAvatar.prototype.UpdateUser = function(){return new Promise((resolve) => {
   var args = [self.id];
 
   // Check if the ID exists in the database
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     var lastLogin = new Date();
 
     if(rows.length == 0){
       // Insert new user into database if they don't exist
       var sql = `INSERT INTO users (boards_id, name, region, last_login) VALUES (?,?,?,?)`;
       var args = [self.id, self.name, self.region, lastLogin];
-      conn.query(sql, args, function(err, rows){
+      db.query(sql, args, function(err, rows){
         resolve();
       });
     }else{
       // Update existing user
       var sql = `UPDATE users SET name=?, region=?, last_login=? WHERE boards_id=?`;
       var args = [self.name, self.region, lastLogin, self.id];
-      conn.query(sql, args, function(err, rows){
+      db.query(sql, args, function(err, rows){
         resolve();
       });
     }
@@ -351,7 +355,7 @@ UserSearch.prototype.Initialize = function(req){return new Promise((resolve) => 
   self.response = {};
 
   self.form           = new formidable.IncomingForm();
-  self.form.uploadDir = "./static/fek-badges"; // Form Option: Set the upload directory
+  self.form.uploadDir = "./static/bek-badges"; // Form Option: Set the upload directory
 
   self.form.parse(req, function(err, data, files){
     if(Object.keys(files).length){
@@ -372,7 +376,7 @@ UserSearch.prototype.QuerySearch = function(){return new Promise((resolve) => {
   var sql  = `SELECT * FROM users WHERE name LIKE ?`;
   var args = ["%"+self.name+"%"];
 
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     self.response = rows;
     resolve();
   });
@@ -394,7 +398,7 @@ ManageCosmetics.prototype.Initialize = function(req){return new Promise((resolve
   self.response = {};
 
   self.form           = new formidable.IncomingForm();
-  self.form.uploadDir = "./static/fek-badges"; // Form Option: Set the upload directory
+  self.form.uploadDir = "./static/bek-badges"; // Form Option: Set the upload directory
 
   self.form.parse(req, function(err, data, files){
     if(Object.keys(files).length){
@@ -425,7 +429,7 @@ ManageCosmetics.prototype.AuthenticateUser = function(){return new Promise((reso
     var sql  = `SELECT id, boards_id FROM users WHERE name=? AND region=? AND auth=?`;
     var args = [self.name, self.region, self.auth];
 
-    conn.query(sql, args, function(err, rows){
+    db.query(sql, args, function(err, rows){
       if(rows[0]){
         self.id = rows[0]["id"];
         self.boardsId = rows[0]["boards_id"];
@@ -458,20 +462,20 @@ ManageCosmetics.prototype.UpdateTitle = function(){return new Promise((resolve) 
     var sql  = `SELECT fish_chips, title FROM users WHERE id=?`;
     var args = [self.id];
 
-    conn.query(sql, args, function(err, rows){
+    db.query(sql, args, function(err, rows){
       var row  = rows[0];
       var sql  = `UPDATE users SET title=? WHERE id=?`;
       var args = [self.data, self.id];
 
       if(row["title"]){
         self.response = "Title changed";
-        conn.query(sql, args, function(err, rows){resolve()});
+        db.query(sql, args, function(err, rows){resolve()});
       }else if(row["fish_chips"] >= 3){
         self.response = "Title added, 3 FC deducted";
-        conn.query(sql, args, function(err, rows){
+        db.query(sql, args, function(err, rows){
           var sql   = `UPDATE users SET fish_chips=? WHERE id=?`;
           var args  = [row["fish_chips"] - 3, self.id];
-          conn.query(sql, args, function(err, rows){resolve()});
+          db.query(sql, args, function(err, rows){resolve()});
         });
       }else{
         self.response = "You don't have enough FC";
@@ -489,12 +493,12 @@ ManageCosmetics.prototype.RemoveTitle = function(){return new Promise((resolve) 
   var sql  = `SELECT title FROM users WHERE id=?`;
   var args = [self.id];
 
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     if(rows[0]["title"]){
       var sql       = `UPDATE users SET title='' WHERE id=?`;
       var args      = [self.id];
       self.response = "Title removed. Fish Chip upkeep has been reduced by 3.";
-      conn.query(sql, args, function(err, rows){resolve()});
+      db.query(sql, args, function(err, rows){resolve()});
     }else{
       self.response = "You don't have a title to remove.";
       resolve();
@@ -516,36 +520,36 @@ ManageCosmetics.prototype.UpdateBadge = function(){return new Promise((resolve) 
   var sql  = `SELECT fish_chips, badge FROM users WHERE id=?`;
   var args = [self.id];
 
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     var row         = rows[0];
     var badge       = row["badge"].split(",");
     var badgeExists = badge[self.data] ? true : false;
 
     var ext = ".jpg";
     var suffix = `${self.boardsId}-${self.data}.${self.fileExt}`;
-    var newPath = `static/fek-badges/${suffix}`;
+    var newPath = `static/bek-badges/${suffix}`;
 
-    badge[self.data] = `http://localhost:9001/fek-badges/${suffix}`;
+    badge[self.data] = `http://localhost:9001/bek-badges/${suffix}`;
     badge = badge.join(",");
 
     var sql  = `UPDATE users SET badge=? WHERE id=?`;
     var args = [badge, self.id];
 
     if(badgeExists){
-      conn.query(sql, args, function(err, rows){
+      db.query(sql, args, function(err, rows){
         self.response = "Badge changed";
         fs.rename(self.filePath, newPath);
 
         resolve();
       });
     }else if(row["fish_chips"] >= 3){
-      conn.query(sql, args, function(err, rows){
+      db.query(sql, args, function(err, rows){
         var sql   = `UPDATE users SET fish_chips=? WHERE id=?`;
         var args  = [row["fish_chips"] - 3, self.id];
         self.response = "Badge added, 3 FC deducted";
         fs.rename(self.filePath, newPath);
 
-        conn.query(sql, args, function(err, rows){resolve()});
+        db.query(sql, args, function(err, rows){resolve()});
       });
     }else{
       self.response = "You don't have enough FC";
@@ -568,13 +572,13 @@ ManageCosmetics.prototype.RemoveBadge = function(){return new Promise((resolve) 
   var sql  = `SELECT badge FROM users WHERE id=?`;
   var args = [self.id];
 
-  conn.query(sql, args, function(err, rows){
+  db.query(sql, args, function(err, rows){
     var row   = rows[0];
     var badge = row["badge"].split(",");
 
     if(badge[self.data]){
       var deleteBadge = badge[self.data].split("/").pop();
-      var deletePath = `static/fek-badges/${deleteBadge}`;
+      var deletePath = `static/bek-badges/${deleteBadge}`;
 
       badge[self.data] = "";
       badge = badge.join(",");
@@ -583,7 +587,7 @@ ManageCosmetics.prototype.RemoveBadge = function(){return new Promise((resolve) 
       var args = [badge, self.id];
 
       self.response = "Badge removed. Fish Chip upkeep has been reduced by 3.";
-      conn.query(sql, args, function(err, rows){
+      db.query(sql, args, function(err, rows){
         fs.unlinkSync(deletePath);
         resolve();
       });
@@ -602,7 +606,7 @@ ManageCosmetics.prototype.AdvanceDay = function(){return new Promise((resolve) =
              FROM users WHERE staff != 1 AND
              (title != '' OR badge != ',,')`;
 
-  conn.query(sql, function(err, rows){
+  db.query(sql, function(err, rows){
     for(var i = 0; i < rows.length; i++){
       var row       = rows[i];
       var cosmetics = 0;
@@ -625,12 +629,12 @@ ManageCosmetics.prototype.AdvanceDay = function(){return new Promise((resolve) =
         var newFC = row["fish_chips"] - upkeep;
         var sql   = `UPDATE users SET fish_chips=? WHERE id=?`;
         var args  = [newFC, row["id"]];
-        conn.query(sql, args, function(err, rows){});
+        db.query(sql, args, function(err, rows){});
       }else{
         // Remove all cosmetics if the user can't pay for it
         var sql  = `UPDATE users SET title='', badge=',,' WHERE id=?`;
         var args = [row["id"]];
-        conn.query(sql, args, function(err, rows){});
+        db.query(sql, args, function(err, rows){});
       }
     }
   });
@@ -767,7 +771,7 @@ TwitterTracker.prototype.Check = function(){return new Promise((resolve) => {
       for(var i = 0; i < tweetContainer.length; i++){
         var sql  = `SELECT * FROM tweets WHERE id=?`;
         var args = [tweetContainer[i]["id"]];
-        conn.query(sql, args, (function(i){ return function(err, rows){
+        db.query(sql, args, (function(i){ return function(err, rows){
           if(rows.length == 0){
             var id         = tweetContainer[i]["id"];
             var createdAt  = tweetContainer[i]["createdAt"];
@@ -778,7 +782,7 @@ TwitterTracker.prototype.Check = function(){return new Promise((resolve) => {
 
             var sql  = `INSERT INTO tweets (id, created_at, name, screen_name, profile_image_url, text) VALUES (?,?,?,?,?,?)`;
             var args = [id, createdAt, name, screenName, avatar, text];
-            conn.query(sql, args);
+            db.query(sql, args);
           }
         }})(i));
       }
@@ -793,7 +797,7 @@ TwitterTracker.prototype.Check = function(){return new Promise((resolve) => {
 // app.post("/querytweets", function(req, res){
 
 //   var sql  = `SELECT * FROM tweets ORDER BY id DESC LIMIT 2;`;
-//   conn.query(sql, function(error, rows){
+//   db.query(sql, function(error, rows){
 //     if(error){
 //       console.log(error);
 //       res.json(null);

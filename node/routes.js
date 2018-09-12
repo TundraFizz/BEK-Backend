@@ -109,6 +109,6 @@ app.get("/calc", function(req, res){
 //////////////////////////////////
 // 404: No route or file exists //
 //////////////////////////////////
-app.use(function (req, res){
-  res.render("404.ejs");
-});
+// app.use(function (req, res){
+//   res.render("404.ejs");
+// });

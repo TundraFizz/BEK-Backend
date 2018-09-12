@@ -3,7 +3,7 @@ mysql:
   # 1. localhost
   # 2. IP address of a remote server
   # 3. Name of a MySQL Docker service
-  host: "mysql"
+  host: "localhost"
   user: "root"
-  password: "fizz"
+  password: ""
   database: "bek"

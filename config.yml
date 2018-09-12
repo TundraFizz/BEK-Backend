@@ -5,5 +5,5 @@ mysql:
   # 3. Name of a MySQL Docker service
   host: "mysql"
   user: "root"
-  password: ""
+  password: "fizz"
   database: "bek"

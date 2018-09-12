@@ -21,7 +21,7 @@ $("#btnSubmit").click(function(){
     if(isDisabled || isUploading || noFile)
       return true;
 
-    $(".summoner-loading", self).css("background", "url(spin.svg)");
+    $(".summoner-loading", self).css("background", "url(img/spinner.svg)");
     $(".summoner-loading", self).text("");
 
     formData.append("name", name);

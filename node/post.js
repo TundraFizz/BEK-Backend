@@ -284,26 +284,22 @@ UploadAvatar.prototype.GetIdFromRiotApi = function(){return new Promise((resolve
       self.id = data["id"];
       self.fullFilePath = `${self.form.uploadDir}/${self.id}.${self.fileExt}`;
 
-      // fs.readdir(self.form.uploadDir, function(err, files){
-      //   self.files = files;
-      //   for(var i = 0; i < self.files.length; i++){
-      //     var dir = self.form.uploadDir;
-      //     var id  = self.files[i].split(".")[0];
-      //     var ext = self.files[i].split(".")[1];
-      //     var deleteThisFile = `${dir}/${id}.${ext}`;
+      fs.readdir(self.form.uploadDir, function(err, files){
+        self.files = files;
+        for(var i = 0; i < self.files.length; i++){
+          var dir = self.form.uploadDir;
+          var id  = self.files[i].split(".")[0];
+          var ext = self.files[i].split(".")[1];
+          var deleteThisFile = `${dir}/${id}.${ext}`;
 
-      //     if(id == self.id)
-      //       fs.unlinkSync(deleteThisFile);
-      //   }
+          if(id == self.id)
+            fs.unlinkSync(deleteThisFile);
+        }
 
-      //   fs.rename(self.filePath, self.fullFilePath);
-      //   self.response = true;
-      //   resolve();
-      // });
-
-      fs.rename(self.filePath, self.fullFilePath, function(err){
-        self.response = true;
-        resolve();
+        fs.rename(self.filePath, self.fullFilePath, function(err){
+          self.response = true;
+          resolve();
+        });
       });
     }else{
       fs.unlinkSync(self.filePath);
